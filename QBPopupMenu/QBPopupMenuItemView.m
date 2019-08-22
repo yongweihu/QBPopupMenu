@@ -47,6 +47,7 @@
             button.imageView.contentMode = UIViewContentModeScaleAspectFit;
             [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [button setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
+            button.adjustsImageWhenDisabled = NO;
             
             button;
         });

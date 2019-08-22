@@ -37,13 +37,18 @@
         // Set arrow image
         UIImage *arrowImage = [self arrowImageWithSize:CGSizeMake(10, 10)
                                              direction:arrowDirection
-                                           highlighted:NO];
+                                                 state:UIControlStateNormal];
         [self.button setImage:arrowImage forState:UIControlStateNormal];
         
         UIImage *highlightedArrowImage = [self arrowImageWithSize:CGSizeMake(10, 10)
                                                         direction:arrowDirection
-                                                      highlighted:YES];
+                                                            state:UIControlStateHighlighted];
         [self.button setImage:highlightedArrowImage forState:UIControlStateHighlighted];
+        
+        UIImage *disabledArrowImage = [self arrowImageWithSize:CGSizeMake(10, 10)
+                                             direction:arrowDirection
+                                                 state:UIControlStateDisabled];
+        [self.button setImage:disabledArrowImage forState:UIControlStateDisabled];
     }
     
     return self;
@@ -70,12 +75,12 @@
     return buttonSize;
 }
 
-- (UIImage *)arrowImageWithSize:(CGSize)size direction:(QBPopupMenuPagenatorDirection)direction highlighted:(BOOL)highlighted
+- (UIImage *)arrowImageWithSize:(CGSize)size direction:(QBPopupMenuPagenatorDirection)direction state:(UIControlState)state
 {
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
     
     // Draw arrow
-    [self drawArrowInRect:CGRectMake(0, 0, size.width, size.height) direction:direction highlighted:highlighted];
+    [self drawArrowInRect:CGRectMake(0, 0, size.width, size.height) direction:direction state:state];
     
     // Create image from buffer
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -121,7 +126,7 @@
 
 #pragma mark - Drawing
 
-- (void)drawArrowInRect:(CGRect)rect direction:(QBPopupMenuPagenatorDirection)direction highlighted:(BOOL)highlighted
+- (void)drawArrowInRect:(CGRect)rect direction:(QBPopupMenuPagenatorDirection)direction state:(UIControlState)state
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
@@ -129,7 +134,20 @@
     CGMutablePathRef path = [self arrowPathInRect:rect direction:direction];
     CGContextAddPath(context, path);
     
-    CGContextSetFillColorWithColor(context, [[UIColor whiteColor] CGColor]);
+    UIColor *color = [UIColor whiteColor];
+    switch (state) {
+        case UIControlStateHighlighted:
+            color = [UIColor lightGrayColor];
+            break;
+            
+        case UIControlStateDisabled:
+            color = [UIColor darkGrayColor];
+            break;
+            
+        default:
+            break;
+    }
+    CGContextSetFillColorWithColor(context, [color CGColor]);
     CGContextFillPath(context);
     
     CGPathRelease(path);
